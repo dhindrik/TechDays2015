@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using HockeyTransfers.Core.IoC;
-using HockeyTransfers.Core.Networking;
 using HockeyTransfers.Core.ServiceAgents;
+using HockeyTransfers.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +15,10 @@ namespace HockeyTransfers.UWP
         public static void Initialize()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<RestClient>().As<IRestClient>();
+
             builder.RegisterType<TransfersServiceAgent>().As<ITransfersServiceAgent>();
+
+            builder.RegisterType<MainViewModel>();
 
             var container = builder.Build();
 

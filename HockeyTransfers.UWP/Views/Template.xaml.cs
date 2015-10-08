@@ -1,6 +1,4 @@
-﻿using HockeyTransfers.Core.IoC;
-using HockeyTransfers.Core.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,17 +20,30 @@ namespace HockeyTransfers.UWP.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainView : Page
+    public sealed partial class Template : Page
     {
-        public MainViewModel ViewModel { get { return DataContext as MainViewModel; } }
-
-        public MainView()
+        public Template()
         {
             this.InitializeComponent();
-
-            DataContext = Resolver.Resolve<MainViewModel>();
-
-            ViewModel.Initialize();
         }
+
+        public new UIElement Content
+        {
+            set
+            {
+                MainContent.Children.Clear();
+                MainContent.Children.Add(value);
+            }
+            get
+            {
+                return MainContent.Children.FirstOrDefault();
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Menu.IsPaneOpen = !Menu.IsPaneOpen;
+        }
+
     }
 }

@@ -9,7 +9,8 @@ namespace HockeyTransfers.Core.ServiceAgents
 {
     public interface ITransfersServiceAgent
     {
-        Task<List<Transfer>> GetAsync();
+        Task<List<Transfer>> GetShlAsync();
+        Task<List<Transfer>> GetAllsvenskanAsync();
     }
 
 }

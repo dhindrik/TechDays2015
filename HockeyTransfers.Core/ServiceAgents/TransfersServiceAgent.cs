@@ -4,29 +4,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HockeyTransfers.Models;
-using HockeyTransfers.Core.Networking;
+
 using System.Xml.Linq;
+using System.Net.Http;
 
 namespace HockeyTransfers.Core.ServiceAgents
 {
     public class TransfersServiceAgent : ITransfersServiceAgent
     {
-        private IRestClient _restClient;
+      
 
-        public TransfersServiceAgent(IRestClient restClient)
-        {
-            _restClient = restClient;
-        }
+     
 
-        public async Task<List<Transfer>> GetAsync()
+        public async Task<List<Transfer>> GetShlAsync()
         {
-            var shlTransfers = await _restClient.GetAsync<string>("http://eliteprospects.com/rss_league.php?league=1");
-            var haTransfers = await _restClient.GetAsync<string>("http://eliteprospects.com/rss_league.php?league=2");
+
+            var shlTransfers = await GetTransfers("http://eliteprospects.com/rss_league.php?league=1");
 
             var transfers = Parse(shlTransfers, TransferType.Unknown);
-            transfers.AddRange(Parse(haTransfers, TransferType.Unknown));
 
             return transfers.OrderByDescending(x => x.Date).ToList();
+        }
+
+
+        public async Task<List<Transfer>> GetAllsvenskanAsync()
+        {
+           
+            var haTransfers = await GetTransfers("http://eliteprospects.com/rss_league.php?league=2");
+
+            var transfers = Parse(haTransfers, TransferType.Unknown);
+
+            return transfers.OrderByDescending(x => x.Date).ToList();
+        }
+
+        private async Task<string> GetTransfers(string url)
+        {
+            var client = new HttpClient();
+
+            var bytes =  await client.GetByteArrayAsync(url);
+
+            var xmlString = Encoding.GetEncoding("ISO8859-1").GetString(bytes, 0, bytes.Length);
+
+            return xmlString;
         }
 
         private List<Transfer> Parse(string xml, TransferType transferType)
@@ -53,7 +72,10 @@ namespace HockeyTransfers.Core.ServiceAgents
                     var val = description.Substring(st);
                     val = val.Substring(0, val.IndexOf("<br")).Trim();
 
-                    transferType = (TransferType)Enum.Parse(typeof(TransferType), val);
+                    if (!string.IsNullOrWhiteSpace(val))
+                    {
+                        transferType = (TransferType)Enum.Parse(typeof(TransferType), val); 
+                    }
 
                 }
 
@@ -121,5 +143,8 @@ namespace HockeyTransfers.Core.ServiceAgents
             else
                 return null;
         }
+
+     
+
     }
 }
