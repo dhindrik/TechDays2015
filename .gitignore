@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/HockeyTransfers.Core/bin/Debug
+/HockeyTransfers.Core/obj/Debug
+/HockeyTransfers.Droid/bin/Debug
+/HockeyTransfers.Droid/obj/Debug
+*.user
+/HockeyTransfers.Models/bin/Debug
+/HockeyTransfers.Models/obj/Debug
+*.suo
+/HockeyTransfers.UWP/bin
+/HockeyTransfers.UWP/obj
+/HockeyTransfers.UWP/packages/Autofac.3.5.2
+/packages
