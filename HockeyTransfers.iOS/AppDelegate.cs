@@ -46,5 +46,12 @@ namespace HockeyTransfers.iOS
         public override void WillTerminate(UIApplication application)
         {
         }
+
+        public override void FinishedLaunching(UIApplication application)
+        {
+            base.FinishedLaunching(application);
+
+            Bootstrapper.Initialize();
+        }
     }
 }

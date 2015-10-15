@@ -7,6 +7,9 @@ using Android.Widget;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
+using HockeyTransfers.Core.ViewModels;
+using HockeyTransfers.Core.IoC;
+using System.Linq;
 
 namespace HockeyTransfers.Droid
 {
@@ -14,6 +17,9 @@ namespace HockeyTransfers.Droid
     public class MainActivity : FragmentActivity, ViewPager.IOnPageChangeListener
     {
         private ViewPager _viewPager;
+        private ListView _shl, _ha;
+
+        private MainViewModel ViewModel { get; set; }
 
         public void OnPageScrolled(int position, float positionOffset, int positionOffsetPixels)
         {
@@ -30,9 +36,12 @@ namespace HockeyTransfers.Droid
             ActionBar.SetSelectedNavigationItem(position);
         }
 
-        protected override void OnCreate(Bundle bundle)
+        protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            Bootstrapper.Initialize();
+
+            ViewModel = Resolver.Resolve<MainViewModel>();
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
@@ -46,27 +55,27 @@ namespace HockeyTransfers.Droid
 
             adapter.Add(new ViewPagerFragment(((i, v, b) =>
             {
-                var text = new TextView(this);
-                text.Text = "Test";
+                _shl = new ListView(this);
 
                 var layout = new LinearLayout(this);
-                layout.AddView(text);
+                layout.AddView(_shl);
 
                 return layout;
-            }
-)));
+            })));
 
             adapter.Add(new ViewPagerFragment(((i, v, b) =>
             {
-                var text = new TextView(this);
-                text.Text = "Test2";
+                _ha = new ListView(this);
+
 
                 var layout = new LinearLayout(this);
-                layout.AddView(text);
+                layout.AddView(_ha);
 
                 return layout;
-            }
-)));
+            })));
+
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.Initialize();
 
             _viewPager.Adapter = adapter;
             _viewPager.AddOnPageChangeListener(this);
@@ -81,6 +90,18 @@ namespace HockeyTransfers.Droid
 
             ActionBar.AddTab(tab1);
             ActionBar.AddTab(tab2);
+        }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == "Shl")
+            {
+                _shl.Adapter = new TransferAdapter(ViewModel.Shl.ToList(), this);
+            }
+            if (e.PropertyName == "Allsvenskan")
+            {
+                _ha.Adapter = new TransferAdapter(ViewModel.Allsvenskan.ToList(), this);
+            }
         }
 
         private void Tab_TabSelected(object sender, ActionBar.TabEventArgs e)
