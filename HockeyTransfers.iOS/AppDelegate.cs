@@ -49,8 +49,6 @@ namespace HockeyTransfers.iOS
 
         public override void FinishedLaunching(UIApplication application)
         {
-            base.FinishedLaunching(application);
-
             Bootstrapper.Initialize();
         }
     }

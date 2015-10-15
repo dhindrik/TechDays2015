@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Autofac;
+using HockeyTransfers.Core.IoC;
+using HockeyTransfers.Core.ServiceAgents;
+using HockeyTransfers.Core.ViewModels;
 
 namespace HockeyTransfers.iOS
 {
@@ -8,7 +9,14 @@ namespace HockeyTransfers.iOS
     {
         public static void Initialize()
         {
+            var builder = new ContainerBuilder();
 
+            builder.RegisterType<TransfersServiceAgent>().As<ITransfersServiceAgent>();
+            builder.RegisterType<MainViewModel>();
+
+            var container = builder.Build();
+
+            Resolver.SetResolver(new AutofacResolver(container));
         }
     }
 }
