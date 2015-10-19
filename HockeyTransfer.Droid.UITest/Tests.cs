@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.Queries;
+using System.Threading.Tasks;
 
 namespace HockeyTransfer.Droid.UITest
 {
@@ -28,9 +29,16 @@ namespace HockeyTransfer.Droid.UITest
 		}
 
 		[Test]
-		public void AppLaunches ()
+		public async void AppLaunches ()
 		{
-			app.Screenshot ("First screen.");
+			
+			//app.Repl ();
+			app.Screenshot ("fist view");
+			app.WaitForElement (x => x.Text ("Hockeyallsvenskan"));
+			app.Tap (x => x.Text ("Hockeyallsvenskan"));
+			await Task.Delay(2000);
+			app.Tap (x => x.Text ("SHL"));
+			app.Tap (x => x.Class ("ListView").Child (3));
 		}
 	}
 }
